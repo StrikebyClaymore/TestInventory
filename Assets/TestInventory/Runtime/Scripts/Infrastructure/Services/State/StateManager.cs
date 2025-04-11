@@ -7,12 +7,7 @@ namespace TestInventory
     public class StateManager : IService
     {
         private readonly SaveManager _saveManager = new();
-        
-        public StateManager()
-        {
-           
-        }
-        
+
         public async UniTask<SaveState> SaveGame()
         {
             var state = new SaveState();
@@ -38,7 +33,7 @@ namespace TestInventory
         
         private async UniTask LoadAllServicesFromStateAsync<TService, TState> (TState state)
             where TService : class, IStateService<TState>
-            where TState : SaveState, new()
+            where TState : SaveState
         {
             foreach (var service in AllServices.Instance.Services.OfType<TService>())
                 await service.LoadServiceState(state);
