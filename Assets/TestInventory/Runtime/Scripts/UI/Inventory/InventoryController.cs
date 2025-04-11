@@ -1,11 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Cysharp.Threading.Tasks;
 using MVC;
+using ServiceLocator;
 using UnityEngine;
 
 namespace TestInventory.UI
 {
-    public class InventoryController : BaseController, IInitializable
+    public class InventoryController : BaseController, IInitializable, IService, IStateService<SaveState>
     {
+        [Serializable]
+        public class InventorySlotSaveState
+        {
+            public int Id;
+            public int Count;
+            public int State;
+            public int Index;
+        }
+        
+        [Serializable]
+        public class InventorySaveState
+        {
+            public InventorySlotSaveState[] Slots;
+        }
+        
         private readonly ControllersContainer _controllers;
         private readonly InventoryTestController _testController;
         private readonly InventoryView _view;
@@ -89,6 +108,51 @@ namespace TestInventory.UI
             {
                 slot.RemoveItem(1);
                 ConsumeItem(slot, itemData, itemData.Id, 1, state);
+            }
+        }
+        
+        public void SaveServiceState(SaveState stateMap)
+        {
+            var slots = _slots.Where(x => !x.IsEmpty).ToArray();
+            var saveSlots = new InventorySlotSaveState[slots.Length];
+            for (var i = 0; i < slots.Length; i++)
+            {
+                var slot = slots[i];
+                var saveSlot = new InventorySlotSaveState()
+                {
+                    Id = slot.ItemData.Id,
+                    Count = slot.Count,
+                    State = (int)slot.AnimalState,
+                    Index = slot.Index,
+                };
+                saveSlots[i] = saveSlot;
+            }
+            var gameState = new InventorySaveState 
+            {
+                Slots = saveSlots
+            };
+            stateMap.SetState(gameState);
+        }
+
+        public UniTask LoadServiceState(SaveState stateMap)
+        {
+            var state = stateMap.GetState<InventorySaveState>();
+            if (state is null)
+                return UniTask.CompletedTask;
+            ClearSlots();
+            foreach (var saveSlot in state.Slots)
+            {
+                var itemData = _config.GetItem(saveSlot.Id);
+                _slots[saveSlot.Index].SetItem(itemData, saveSlot.Count, (EAnimalState)saveSlot.State);
+            }
+            return UniTask.CompletedTask;
+        }
+
+        private void ClearSlots()
+        {
+            foreach (var slot in _slots)
+            {
+                slot.SetItem(null);
             }
         }
 

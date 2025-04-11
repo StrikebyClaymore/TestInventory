@@ -13,7 +13,8 @@ namespace TestInventory
         
         private void Awake()
         {
-            _services = AllServices.Container;
+            _services = AllServices.Instance;
+            InstallStateManager();
             InstallViews();
             InstallControllers();
         }
@@ -22,6 +23,11 @@ namespace TestInventory
         {
             _controllers.Initialize();
             _controllers.GetController<MainMenuController>().Show();
+        }
+
+        private void InstallStateManager()
+        {
+            _services.RegisterService(new StateManager());
         }
 
         private void InstallViews()

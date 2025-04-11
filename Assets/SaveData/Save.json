@@ -1,0 +1,10 @@
+{
+    "_jsonDictionary": {
+        "_keys": [
+            "TestInventory.UI.InventoryController+InventorySaveState, TestInventory, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+        ],
+        "_values": [
+            "{\"Slots\":[{\"Id\":0,\"Count\":2,\"State\":0,\"Index\":0},{\"Id\":52,\"Count\":2,\"State\":0,\"Index\":1},{\"Id\":52,\"Count\":1,\"State\":1,\"Index\":2}]}"
+        ]
+    }
+}

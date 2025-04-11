@@ -14,8 +14,10 @@ namespace TestInventory
         public void Install(AllServices services, ViewsContainer views, ConfigsContainer configs)
         {
             RegisterController<InventoryTestController>(new InventoryTestController(this, views));
-            RegisterController<MainMenuController>(new MainMenuController(this, views, configs));
-            RegisterController<InventoryController>(new InventoryController(this, views, configs));
+            RegisterController<MainMenuController>(new MainMenuController(this, views, configs, services));
+            var inventory = new InventoryController(this, views, configs);
+            RegisterController<InventoryController>(inventory);
+            services.RegisterService<InventoryController>(inventory);
             HideAll();
         }
 
