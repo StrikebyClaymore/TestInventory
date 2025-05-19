@@ -216,6 +216,8 @@ namespace TestInventory.UI
         
         private void CreateSlots()
         {
+            foreach (Transform child in _view.SlotContainer)
+                GameObject.Destroy(child.gameObject);
             for (var i = 0; i < _config.InventorySize; i++)
             {
                 var slot = GameObject.Instantiate(_view.SlotPrefab, _view.SlotContainer);
